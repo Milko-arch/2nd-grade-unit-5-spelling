@@ -116,7 +116,6 @@
             display: block !important;
         }
 
-        /* FINAL ANIMATION */
         #final-spaceship {
             position: fixed;
             bottom: -150px;
@@ -133,7 +132,6 @@
             transform: translate(80vw, -120vh) rotate(45deg) scale(1.5);
         }
 
-        /* WAITING STATE */
         .waiting-zog {
             cursor: wait !important;
             opacity: 0.7;
@@ -143,10 +141,8 @@
 </head>
 <body class="min-h-screen">
 
-    <!-- FINAL SPACESHIP ASSET -->
     <div id="final-spaceship">🚀</div>
 
-    <!-- TOP HUD -->
     <nav class="fixed top-0 left-0 right-0 z-50 p-4">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -171,14 +167,12 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <main id="game-container" class="pt-24 pb-12 px-4 max-w-5xl mx-auto transition-all duration-500">
         
-        <!-- SECTION 0: ADVENTURE MAP -->
         <section id="map-section" class="space-y-8">
             <div class="text-center space-y-2">
                 <h1 class="text-6xl md:text-8xl font-display text-indigo-600 drop-shadow-md">FOOTPRINTS</h1>
-                <p class="text-indigo-500 font-title tracking-[0.1em] text-2xl">Unit 5 Spelling Second Grade</p>
+                <p class="text-indigo-500 font-title tracking-[0.1em] text-2xl">Unit 5 Spelling second grade</p>
                 <p class="text-slate-400 font-bold uppercase text-xs mt-4">Help Zog repair his ship</p>
             </div>
 
@@ -232,7 +226,6 @@
             </div>
         </section>
 
-        <!-- SECTION 1: LEARN (Radar) -->
         <section id="learn-section" class="hidden bounce-in">
             <div class="mb-6 flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-3xl shadow-sm gap-4">
                 <div class="text-center md:text-left">
@@ -244,7 +237,6 @@
             <div id="learn-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
-        <!-- SECTION 2: MEMORY (Twin DNA) -->
         <section id="memory-section" class="hidden max-w-4xl mx-auto bounce-in">
             <div class="text-center mb-6">
                 <h2 class="font-title text-pink-600 text-3xl">Twin DNA Pairs</h2>
@@ -253,7 +245,6 @@
             <div id="memory-board" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3"></div>
         </section>
 
-        <!-- SECTION 3: SPELLING (Assembler) -->
         <section id="spelling-section" class="hidden max-w-3xl mx-auto bounce-in">
             <div class="glass-card p-8 rounded-[50px] text-center space-y-8">
                 <div id="spelling-icon" onclick="repeatSpellingWord()" class="text-7xl mb-4 float cursor-pointer hover:scale-110 active:scale-90 transition-transform">🛸</div>
@@ -263,12 +254,10 @@
             </div>
         </section>
 
-        <!-- SECTION 4: QUIZ (Liftoff) -->
         <section id="quiz-section" class="hidden max-w-2xl mx-auto bounce-in">
             <div id="quiz-card" class="glass-card p-10 rounded-[50px] text-center space-y-8"></div>
         </section>
 
-        <!-- SECTION 5: TROPHIES -->
         <section id="trophies-section" class="hidden bounce-in">
             <div class="text-center mb-8">
                 <h2 class="text-5xl font-display text-indigo-600">Your Badge Collection</h2>
@@ -279,7 +268,6 @@
 
     </main>
 
-    <!-- GLOBAL MODAL -->
     <div id="global-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-indigo-950/80 backdrop-blur-md">
         <div class="glass-card max-w-md w-full rounded-[50px] p-10 text-center space-y-6 bounce-in">
             <div id="modal-emoji" class="text-9xl">✨</div>
@@ -289,7 +277,6 @@
         </div>
     </div>
 
-    <!-- DIPLOMA MODAL -->
     <div id="diploma-modal" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-4 bg-indigo-900/90 backdrop-blur-xl">
         <div class="glass-card max-lg w-full rounded-[60px] p-10 text-center space-y-6">
             <div class="text-8xl">👑</div>
@@ -304,14 +291,14 @@
 
     <script>
         const VOCABULARY = [
-            { word: 'THESE', icon: '👈' }, { word: 'NOSE', icon: '👃' },
-            { word: 'USE', icon: '🛠️' }, { word: 'ROSE', icon: '🌹' },
-            { word: 'POLE', icon: '🚩' }, { word: 'CLOSE', icon: '🚪' },
-            { word: 'CUTE', icon: '🥰' }, { word: 'THOSE', icon: '👉' },
-            { word: 'MULE', icon: '🫏' }, { word: 'ONE', icon: '1️⃣' },
-            { word: 'LOVE', icon: '❤️' }, { word: 'COME', icon: '👋' },
-            { word: 'HOME', icon: '🏠' }, { word: 'JOKE', icon: '😂' },
-            { word: 'WROTE', icon: '✍️' }, { word: 'ICE CUBE', icon: '🧊' }
+            { word: 'TAP', icon: '🚰' }, { word: 'TAPE', icon: '🎞️' },
+            { word: 'FIN', icon: '🦈' }, { word: 'FINE', icon: '👌' },
+            { word: 'TUB', icon: '🛁' }, { word: 'TUBE', icon: '🧪' },
+            { word: 'ROB', icon: '🥷' }, { word: 'ROBE', icon: '🥋' },
+            { word: 'CAP', icon: '🧢' }, { word: 'CAPE', icon: '🦸' },
+            { word: 'SLID', icon: '🛷' }, { word: 'SLIDE', icon: '🛝' },
+            { word: 'HOP', icon: '🐰' }, { word: 'HOPE', icon: '🤞' },
+            { word: 'SCRAP', icon: '🗑️' }, { word: 'SCRAPE', icon: '🩹' }
         ];
 
         const BADGES_CONFIG = {
@@ -344,22 +331,17 @@
             window.speechSynthesis.speak(utter);
         }
 
-        // --- NEW AUDIO EFFECTS ---
         function playTakeoffSound() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.type = 'sawtooth';
             oscillator.frequency.setValueAtTime(50, audioCtx.currentTime);
             oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 3);
-
             gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 3.5);
-
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             oscillator.start();
             oscillator.stop(audioCtx.currentTime + 3.5);
         }
@@ -368,13 +350,9 @@
             if (state.hasHeardIntro) return;
             state.hasHeardIntro = true;
             state.isIntroPlaying = true;
-            
             document.getElementById('btn-learn').classList.add('waiting-zog');
-            
-            const introText = "Hello explorer! I am Zog. My spaceship is broken and I am stranded on Earth! I need your help to find special sound energy to repair my ship. Please, listen to the words, find the pairs, and build them correctly so I can return home to my planet! Let's start with the Sound Radar!";
-            
+            const introText = "Hello explorer! I am Zog. My spaceship is broken! I need your help to find special sound energy. Please, listen to the words, find the pairs, and build them correctly so I can return home! Let's start with the Sound Radar!";
             updateZog("Listen to my story! 👽");
-            
             say(introText, 0.9, () => {
                 state.isIntroPlaying = false;
                 document.getElementById('btn-learn').classList.remove('waiting-zog');
@@ -402,9 +380,7 @@
                 const statusIcon = btn.querySelector('.status-icon');
                 const isUnlocked = index === 0 || state.completedMissions.includes(missions[index - 1]);
                 const isDone = state.completedMissions.includes(type);
-
                 if (type === 'learn' && state.isIntroPlaying) return;
-
                 if (isUnlocked) {
                     btn.classList.remove('mission-locked');
                     if (statusIcon) statusIcon.innerText = isDone ? '✅' : '🔓';
@@ -442,7 +418,6 @@
 
         function startMission(type) {
             if (type === 'learn' && state.isIntroPlaying) return; 
-            
             showSection(type);
             if(type === 'learn') renderLearn();
             if(type === 'memory') initMemory();
@@ -467,7 +442,7 @@
             grid.innerHTML = VOCABULARY.map(item => {
                 const isHeard = state.radarHeard.has(item.word);
                 return `
-                    <div id="radar-${item.word.replace(' ', '-')}" onclick="clickLearn('${item.word}')" class="radar-card glass-card p-6 rounded-[35px] text-center cursor-pointer hover:scale-105 active:scale-95 transition-all relative ${isHeard ? 'heard' : ''}">
+                    <div id="radar-${item.word}" onclick="clickLearn('${item.word}')" class="radar-card glass-card p-6 rounded-[35px] text-center cursor-pointer hover:scale-105 active:scale-95 transition-all relative ${isHeard ? 'heard' : ''}">
                         <div class="heard-check absolute top-4 right-4 text-indigo-500 hidden text-xl">✅</div>
                         <div class="text-5xl mb-3 float">${item.icon}</div>
                         <div class="font-title text-indigo-600 text-lg uppercase">${item.word}</div>
@@ -481,7 +456,7 @@
             if(!state.radarHeard.has(word)) {
                 state.radarHeard.add(word);
                 addStars(1);
-                const el = document.getElementById(`radar-${word.replace(' ', '-')}`);
+                const el = document.getElementById(`radar-${word}`);
                 if(el) el.classList.add('heard');
             }
         }
@@ -489,7 +464,7 @@
         function tryFinishRadar() {
             if(state.radarHeard.size < VOCABULARY.length) {
                 const missing = VOCABULARY.length - state.radarHeard.size;
-                showModal("SCAN NOT COMPLETE", `Zog's radar needs to hear ${missing} more words to calibrate!`, "🛰️");
+                showModal("SCAN NOT COMPLETE", `Zog's radar needs to hear ${missing} more words!`, "🛰️");
             } else {
                 if (!state.completedMissions.includes('learn')) {
                     state.completedMissions.push('learn');
@@ -497,14 +472,11 @@
                     unlockBadge('learn');
                     confetti();
                 }
-                showModal("RADAR READY!", "Scanning complete! Energy signatures found. Moving to Twin DNA mission!", "🛰️");
-                
+                showModal("RADAR READY!", "Scanning complete! Let's find the Twin DNA energy pairs!", "🛰️");
                 const modalBtn = document.getElementById('modal-btn');
-                const originalOnClick = modalBtn.onclick;
                 modalBtn.onclick = () => {
                     document.getElementById('global-modal').classList.add('hidden');
                     startMission('memory');
-                    modalBtn.onclick = originalOnClick;
                 };
             }
         }
@@ -513,22 +485,16 @@
             const board = document.getElementById('memory-board');
             board.innerHTML = '';
             state.memoryActive = [];
-            const words = [...VOCABULARY];
-            const deck = [...words, ...words].sort(() => 0.5 - Math.random());
-            
+            const deck = [...VOCABULARY, ...VOCABULARY].sort(() => 0.5 - Math.random());
             deck.forEach(item => {
                 const card = document.createElement('div');
                 card.className = "h-20 sm:h-24 bg-white rounded-[20px] border-2 border-indigo-100 flex items-center justify-center cursor-pointer hover:shadow-xl transition-all shadow-sm overflow-hidden";
-                card.innerHTML = `
-                    <div class="opacity-0 transition-opacity duration-300 text-center flex flex-col items-center">
-                        <span class="text-3xl">${item.icon}</span>
-                        <span class="text-[10px] font-bold text-indigo-600 mt-1 uppercase">${item.word}</span>
-                    </div>
-                `;
+                card.innerHTML = `<div class="opacity-0 transition-opacity duration-300 text-center flex flex-col items-center"><span class="text-3xl">${item.icon}</span><span class="text-[10px] font-bold text-indigo-600 mt-1 uppercase">${item.word}</span></div>`;
                 card.onclick = () => flipCard(card, item);
                 board.appendChild(card);
             });
         }
+
         function flipCard(el, item) {
             if (el.classList.contains('matched') || state.memoryActive.length >= 2 || el.querySelector('div').classList.contains('opacity-100')) return;
             el.querySelector('div').classList.replace('opacity-0', 'opacity-100');
@@ -542,7 +508,7 @@
                     c2.el.classList.add('matched', 'bg-emerald-50', 'border-emerald-500');
                     addStars(10);
                     state.memoryActive = [];
-                    if(document.querySelectorAll('.matched').length === 32) {
+                    if(document.querySelectorAll('.matched').length === VOCABULARY.length * 2) {
                         setTimeout(() => { 
                             if (!state.completedMissions.includes('memory')) {
                                 state.completedMissions.push('memory');
@@ -550,14 +516,10 @@
                                 unlockBadge('memory');
                                 confetti();
                             }
-                            showModal("MISSION COMPLETE!", "All energy pairs restored. Let's build the words!", "🧬"); 
-                            
-                            const modalBtn = document.getElementById('modal-btn');
-                            const originalOnClick = modalBtn.onclick;
-                            modalBtn.onclick = () => {
+                            showModal("MISSION COMPLETE!", "Energy restored. Let's build the words!", "🧬"); 
+                            document.getElementById('modal-btn').onclick = () => {
                                 document.getElementById('global-modal').classList.add('hidden');
                                 startMission('spelling');
-                                modalBtn.onclick = originalOnClick;
                             };
                         }, 1000);
                     }
@@ -574,34 +536,22 @@
         }
 
         function initSpelling() { state.currentWordIdx = 0; renderSpelling(); }
-        
-        function repeatSpellingWord() {
-            const current = VOCABULARY[state.currentWordIdx];
-            if(current) say(current.word);
-        }
-
+        function repeatSpellingWord() { say(VOCABULARY[state.currentWordIdx].word); }
         function renderSpelling() {
             const current = VOCABULARY[state.currentWordIdx];
-            const word = current.word.replace(/\s/g, '');
             state.spellingAttempt = [];
             document.getElementById('spelling-icon').innerText = current.icon;
             const slots = document.getElementById('spelling-slots');
             slots.innerHTML = '';
-            
-            const shouldShowHint = state.currentWordIdx === 0;
-
-            for(let i=0; i < word.length; i++) {
+            for(let i=0; i < current.word.length; i++) {
                 const s = document.createElement('div');
                 s.className = "letter-slot";
-                if(shouldShowHint) { 
-                    s.innerText = word[i]; 
-                    s.classList.add('opacity-30'); 
-                }
+                if(state.currentWordIdx === 0) { s.innerText = current.word[i]; s.classList.add('opacity-30'); }
                 slots.appendChild(s);
             }
             const keyboard = document.getElementById('spelling-keyboard');
             keyboard.innerHTML = '';
-            const letters = word.split('').sort(() => 0.5 - Math.random());
+            const letters = current.word.split('').sort(() => 0.5 - Math.random());
             letters.forEach(l => {
                 const btn = document.createElement('button');
                 btn.className = "spelling-tile w-14 h-14 bg-white rounded-2xl font-title text-2xl text-slate-700 flex items-center justify-center border-2 border-slate-100";
@@ -613,7 +563,7 @@
         }
 
         function handleSpellingInput(letter, btn) {
-            const targetWord = VOCABULARY[state.currentWordIdx].word.replace(/\s/g, '');
+            const targetWord = VOCABULARY[state.currentWordIdx].word;
             const nextIdx = state.spellingAttempt.length;
             if(letter === targetWord[nextIdx]) {
                 say(letter);
@@ -632,14 +582,10 @@
                             unlockBadge('spelling');
                             confetti();
                         }
-                        showModal("WORDS ASSEMBLED", "Great construction work! Ready for the Final Liftoff?", "🏗️"); 
-                        
-                        const modalBtn = document.getElementById('modal-btn');
-                        const originalOnClick = modalBtn.onclick;
-                        modalBtn.onclick = () => {
+                        showModal("WORDS ASSEMBLED", "Great work! Ready for the Final Liftoff?", "🏗️"); 
+                        document.getElementById('modal-btn').onclick = () => {
                             document.getElementById('global-modal').classList.add('hidden');
                             startMission('quiz');
-                            modalBtn.onclick = originalOnClick;
                         };
                     }
                 }
@@ -661,7 +607,7 @@
             }
             options.sort(() => 0.5 - Math.random());
             card.innerHTML = `
-                <p class="text-slate-400 font-bold uppercase text-xs">Challenge ${state.currentWordIdx + 1}/16</p>
+                <p class="text-slate-400 font-bold uppercase text-xs">Challenge ${state.currentWordIdx + 1}/${VOCABULARY.length}</p>
                 <h2 class="text-4xl font-display text-indigo-600">Which word do you hear?</h2>
                 <button onclick="say('${correct.word}')" class="w-32 h-32 bg-indigo-600 text-white rounded-[40px] mx-auto flex items-center justify-center text-6xl shadow-2xl hover:scale-105 transition-all">🔊</button>
                 <div class="grid gap-4 mt-8">${options.map(opt => `<button onclick="checkQuizAnswer('${opt.word}', '${correct.word}')" class="py-6 rounded-3xl bg-indigo-50 border-4 border-white text-2xl font-title text-indigo-700 hover:border-indigo-400 transition-all uppercase">${opt.word}</button>`).join('')}</div>
@@ -675,26 +621,17 @@
             else {
                 finishMission('quiz');
                 if(state.quizScore >= 12) { document.getElementById('diploma-modal').classList.remove('hidden'); }
-                else { showModal("Good try!", `Score: ${state.quizScore}/16. Practice more for your diploma!`, "🚀"); }
+                else { showModal("Good try!", `Score: ${state.quizScore}/${VOCABULARY.length}. Practice more!`, "🚀"); }
             }
         }
 
         function renderTrophies() {
             const grid = document.getElementById('trophy-grid');
             if(state.trophies.length === 0) {
-                grid.innerHTML = `<div class="col-span-full glass-card p-12 text-center text-slate-400 font-bold border-dashed border-4">No badges yet. Complete missions to fill your collection!</div>`;
+                grid.innerHTML = `<div class="col-span-full glass-card p-12 text-center text-slate-400 font-bold border-dashed border-4">No badges yet.</div>`;
                 return;
             }
-            grid.innerHTML = state.trophies.map(t => `
-                <div class="glass-card p-6 rounded-[40px] text-center badge-card border-b-8 border-indigo-200">
-                    <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center text-5xl mx-auto mb-4">${t.icon}</div>
-                    <h4 class="font-title text-indigo-600 text-lg">${t.name}</h4>
-                    <p class="text-xs font-bold text-slate-400 uppercase mt-1">${t.description}</p>
-                    <div class="mt-4 pt-4 border-t border-slate-100">
-                        <span class="text-[10px] text-indigo-400 font-bold">${t.date}</span>
-                    </div>
-                </div>
-            `).join('');
+            grid.innerHTML = state.trophies.map(t => `<div class="glass-card p-6 rounded-[40px] text-center badge-card border-b-8 border-indigo-200"><div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center text-5xl mx-auto mb-4">${t.icon}</div><h4 class="font-title text-indigo-600 text-lg">${t.name}</h4><p class="text-xs font-bold text-slate-400 uppercase mt-1">${t.description}</p><div class="mt-4 pt-4 border-t border-slate-100"><span class="text-[10px] text-indigo-400 font-bold">${t.date}</span></div></div>`).join('');
         }
 
         function showModal(title, msg, emoji) {
@@ -707,15 +644,11 @@
 
         function downloadDiploma() {
             const name = document.getElementById('player-name').value || "SUPER EXPLORER";
-            
             if (state.quizScore >= 12) {
                 const ship = document.getElementById('final-spaceship');
                 ship.classList.add('launching');
-                
-                // --- EFFECT: Say Bye Bye + Sound ---
                 playTakeoffSound();
                 say("Thank you explorer! Bye bye!", 0.9);
-                
                 const end = Date.now() + (3 * 1000);
                 (function frame() {
                     confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
@@ -723,7 +656,6 @@
                     if (Date.now() < end) { requestAnimationFrame(frame); }
                 }());
             }
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l', 'mm', 'a4');
             const w = 297, h = 210;
@@ -731,17 +663,15 @@
             doc.setFillColor(255, 255, 255); doc.roundedRect(10, 10, w-20, h-20, 15, 15, 'F');
             doc.setDrawColor(99, 102, 241); doc.setLineWidth(3); doc.roundedRect(15, 15, w-30, h-30, 12, 12, 'S');
             doc.setTextColor(99, 102, 241); doc.setFontSize(50); doc.text("FOOTPRINTS DIPLOMA", w/2, 50, {align: 'center'});
-            doc.setFontSize(20); doc.setTextColor(148, 163, 184); doc.text("Unit 4 - Second Grade", w/2, 65, {align: 'center'});
+            doc.setFontSize(20); doc.setTextColor(148, 163, 184); doc.text("Unit 5 Spelling second grade", w/2, 65, {align: 'center'});
             doc.setFontSize(45); doc.setTextColor(236, 72, 153); doc.text(name.toUpperCase(), w/2, 115, {align: 'center'});
             doc.setFontSize(18); doc.setTextColor(71, 85, 105); doc.text("For successfully mastering the magic vocabulary of special sounds.", w/2, 145, {align: 'center'});
-            doc.setFontSize(22); doc.setTextColor(16, 185, 129); doc.text(`FINAL SCORE: ${state.quizScore}/16`, w/2, 175, {align: 'center'});
+            doc.setFontSize(22); doc.setTextColor(16, 185, 129); doc.text(`FINAL SCORE: ${state.quizScore}/${VOCABULARY.length}`, w/2, 175, {align: 'center'});
             doc.save(`Diploma_${name}.pdf`);
-            
             setTimeout(() => {
                 document.getElementById('diploma-modal').classList.add('hidden');
-                showModal("ZOG IS HOME!", "Your ship energy worked! Zog is flying to the stars. Your diploma is saved!", "🚀");
-                const ship = document.getElementById('final-spaceship');
-                setTimeout(() => ship.classList.remove('launching'), 4000);
+                showModal("ZOG IS HOME!", "Your diploma is saved!", "🚀");
+                setTimeout(() => document.getElementById('final-spaceship').classList.remove('launching'), 4000);
             }, 3500);
         }
 
