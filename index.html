@@ -81,6 +81,12 @@
             animation: shake 0.4s;
         }
 
+        .letter-slot.hint-active {
+            color: #94a3b8;
+            border-color: #6366f1;
+            background: #eef2ff;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -191,7 +197,7 @@
                     <div class="w-24 h-24 bg-pink-100 rounded-3xl flex items-center justify-center text-5xl group-hover:scale-110 transition-transform">🧬</div>
                     <div>
                         <h3 class="font-title text-2xl text-pink-600">Twin DNA</h3>
-                        <p class="text-slate-500 font-medium">Find all the energy pairs</p>
+                        <p id="memory-hint" class="text-slate-500 font-medium">Find all the energy pairs</p>
                     </div>
                 </button>
 
@@ -238,15 +244,38 @@
         </section>
 
         <section id="memory-section" class="hidden max-w-4xl mx-auto bounce-in">
-            <div class="text-center mb-6">
-                <h2 class="font-title text-pink-600 text-3xl">Twin DNA Pairs</h2>
-                <p class="text-slate-500">Find the 16 pairs to restore energy</p>
+            <div class="flex justify-between items-center mb-6">
+                <div class="text-left">
+                    <h2 class="font-title text-pink-600 text-3xl">Twin DNA Pairs</h2>
+                    <p id="memory-phase-text" class="text-slate-500 font-bold uppercase tracking-widest">Phase 1: First 8 pairs</p>
+                </div>
+                <div class="glass-card px-6 py-3 rounded-2xl border-pink-100">
+                    <span class="text-pink-500 font-title text-xl">⏱️ <span id="memory-timer">00:00</span></span>
+                </div>
             </div>
-            <div id="memory-board" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3"></div>
+            <div id="memory-board" class="grid grid-cols-4 gap-3"></div>
+            
+            <div id="memory-history" class="mt-8 glass-card p-6 rounded-[30px] hidden">
+                <h3 class="font-title text-indigo-600 mb-4">DNA Repair History</h3>
+                <div id="history-list" class="space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+            </div>
         </section>
 
         <section id="spelling-section" class="hidden max-w-3xl mx-auto bounce-in">
-            <div class="glass-card p-8 rounded-[50px] text-center space-y-8">
+            <div class="glass-card p-8 rounded-[50px] text-center space-y-6 relative overflow-hidden">
+                <div class="flex justify-between items-center px-4">
+                   <div class="bg-indigo-100 text-indigo-600 px-4 py-1 rounded-full font-bold text-sm uppercase">
+                       Word <span id="spelling-count">1</span> of 16
+                   </div>
+                   <button id="spelling-hint-btn" onclick="showSpellingHint()" class="hidden w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl shadow-sm hover:scale-110 transition-transform active:scale-90">
+                       👁️
+                   </button>
+                </div>
+
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="word-inner-progress" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%"></div>
+                </div>
+
                 <div id="spelling-icon" onclick="repeatSpellingWord()" class="text-7xl mb-4 float cursor-pointer hover:scale-110 active:scale-90 transition-transform">🛸</div>
                 <div id="spelling-slots" class="flex justify-center flex-wrap gap-2 min-h-[80px]"></div>
                 <div id="spelling-keyboard" class="flex flex-wrap justify-center gap-3 mt-8"></div>
@@ -269,7 +298,7 @@
     </main>
 
     <div id="global-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-indigo-950/80 backdrop-blur-md">
-        <div class="glass-card max-w-md w-full rounded-[50px] p-10 text-center space-y-6 bounce-in">
+        <div class="glass-card max-md w-full rounded-[50px] p-10 text-center space-y-6 bounce-in">
             <div id="modal-emoji" class="text-9xl">✨</div>
             <h2 id="modal-title" class="text-4xl font-display text-indigo-600 uppercase"></h2>
             <p id="modal-msg" class="text-slate-600 font-bold"></p>
@@ -301,6 +330,17 @@
             { word: 'SCRAP', icon: '🗑️' }, { word: 'SCRAPE', icon: '🩹' }
         ];
 
+        const ENCOURAGEMENT = [
+            "Great job! Keep going!",
+            "You are doing amazing!",
+            "Zog is very happy with your help!",
+            "Excellent work, explorer!",
+            "You are a spelling superstar!",
+            "Wow! You are so fast!",
+            "Almost there! Don't stop!",
+            "Your brain is powerful!"
+        ];
+
         const BADGES_CONFIG = {
             'learn': { name: 'Radar Scout', icon: '🛰️', desc: 'Auditory exploration complete' },
             'memory': { name: 'Memory Master', icon: '🧠', desc: 'Visual-semantic connection' },
@@ -314,8 +354,13 @@
             trophies: [],
             currentWordIdx: 0,
             spellingAttempt: [],
+            spellingErrors: 0,
             scaffoldingLevel: 2,
             memoryActive: [],
+            memoryPhase: 1, 
+            memoryTime: 0,
+            memoryTimerInterval: null,
+            memoryHistory: [],
             quizScore: 0,
             radarHeard: new Set(),
             hasHeardIntro: false,
@@ -364,7 +409,9 @@
 
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`${id}-section`).classList.remove('hidden');
+            const target = document.getElementById(`${id}-section`);
+            if(target) target.classList.remove('hidden');
+            if(id !== 'memory' && state.memoryTimerInterval) clearInterval(state.memoryTimerInterval);
             window.scrollTo(0,0);
             if(id === 'map') updateMapStatus();
             if(id === 'trophies') {
@@ -413,6 +460,7 @@
                 unlockBadge(type);
                 confetti();
             }
+            giveEncouragement(); 
             showSection('map');
         }
 
@@ -420,7 +468,12 @@
             if (type === 'learn' && state.isIntroPlaying) return; 
             showSection(type);
             if(type === 'learn') renderLearn();
-            if(type === 'memory') initMemory();
+            if(type === 'memory') { 
+                state.memoryPhase = 1; 
+                state.memoryTime = 0;
+                initMemory(); 
+                startMemoryTimer();
+            }
             if(type === 'spelling') initSpelling();
             if(type === 'quiz') initQuiz();
         }
@@ -430,11 +483,18 @@
             if(bubble) bubble.innerText = msg;
         }
 
+        function giveEncouragement() {
+            const msg = ENCOURAGEMENT[Math.floor(Math.random() * ENCOURAGEMENT.length)];
+            updateZog(msg + " 👽");
+            say(msg);
+        }
+
         function addStars(amount) {
             state.stars += amount;
             document.getElementById('star-count').innerText = state.stars;
             const progress = (state.stars % 100);
-            document.getElementById('level-progress').style.width = `${progress}%`;
+            const levelProgress = document.getElementById('level-progress');
+            if(levelProgress) levelProgress.style.width = `${progress}%`;
         }
 
         function renderLearn() {
@@ -471,25 +531,40 @@
                     addStars(50);
                     unlockBadge('learn');
                     confetti();
+                    giveEncouragement(); 
                 }
                 showModal("RADAR READY!", "Scanning complete! Let's find the Twin DNA energy pairs!", "🛰️");
-                const modalBtn = document.getElementById('modal-btn');
-                modalBtn.onclick = () => {
+                document.getElementById('modal-btn').onclick = () => {
                     document.getElementById('global-modal').classList.add('hidden');
                     startMission('memory');
                 };
             }
         }
 
+        function startMemoryTimer() {
+            if(state.memoryTimerInterval) clearInterval(state.memoryTimerInterval);
+            const timerDisplay = document.getElementById('memory-timer');
+            state.memoryTimerInterval = setInterval(() => {
+                state.memoryTime++;
+                const mins = Math.floor(state.memoryTime / 60).toString().padStart(2, '0');
+                const secs = (state.memoryTime % 60).toString().padStart(2, '0');
+                if(timerDisplay) timerDisplay.innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
         function initMemory() {
             const board = document.getElementById('memory-board');
+            const phaseText = document.getElementById('memory-phase-text');
             board.innerHTML = '';
             state.memoryActive = [];
-            const deck = [...VOCABULARY, ...VOCABULARY].sort(() => 0.5 - Math.random());
+            const startIdx = state.memoryPhase === 1 ? 0 : 8;
+            const currentGroup = VOCABULARY.slice(startIdx, startIdx + 8);
+            phaseText.innerText = `Phase ${state.memoryPhase}: ${state.memoryPhase === 1 ? 'First' : 'Final'} 8 pairs`;
+            const deck = [...currentGroup, ...currentGroup].sort(() => 0.5 - Math.random());
             deck.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "h-20 sm:h-24 bg-white rounded-[20px] border-2 border-indigo-100 flex items-center justify-center cursor-pointer hover:shadow-xl transition-all shadow-sm overflow-hidden";
-                card.innerHTML = `<div class="opacity-0 transition-opacity duration-300 text-center flex flex-col items-center"><span class="text-3xl">${item.icon}</span><span class="text-[10px] font-bold text-indigo-600 mt-1 uppercase">${item.word}</span></div>`;
+                card.className = "h-24 sm:h-32 bg-white rounded-[25px] border-2 border-indigo-100 flex items-center justify-center cursor-pointer hover:shadow-xl transition-all shadow-sm overflow-hidden";
+                card.innerHTML = `<div class="opacity-0 transition-opacity duration-300 text-center flex flex-col items-center"><span class="text-4xl">${item.icon}</span><span class="text-xs font-bold text-indigo-600 mt-2 uppercase tracking-tighter">${item.word}</span></div>`;
                 card.onclick = () => flipCard(card, item);
                 board.appendChild(card);
             });
@@ -508,19 +583,37 @@
                     c2.el.classList.add('matched', 'bg-emerald-50', 'border-emerald-500');
                     addStars(10);
                     state.memoryActive = [];
-                    if(document.querySelectorAll('.matched').length === VOCABULARY.length * 2) {
+                    if(document.querySelectorAll('.matched').length === 16) {
                         setTimeout(() => { 
-                            if (!state.completedMissions.includes('memory')) {
-                                state.completedMissions.push('memory');
-                                addStars(50);
-                                unlockBadge('memory');
+                            if(state.memoryPhase === 1) {
+                                state.memoryPhase = 2;
                                 confetti();
+                                showModal("PHASE 1 COMPLETE!", "8 pairs found! Now for the final 8...", "🧬");
+                                document.getElementById('modal-btn').onclick = () => {
+                                    document.getElementById('global-modal').classList.add('hidden');
+                                    initMemory();
+                                };
+                            } else {
+                                clearInterval(state.memoryTimerInterval);
+                                const totalTime = document.getElementById('memory-timer').innerText;
+                                state.memoryHistory.push({
+                                    time: totalTime,
+                                    date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                });
+                                renderMemoryHistory();
+                                if (!state.completedMissions.includes('memory')) {
+                                    state.completedMissions.push('memory');
+                                    addStars(50);
+                                    unlockBadge('memory');
+                                    confetti();
+                                    giveEncouragement(); 
+                                }
+                                showModal("MISSION COMPLETE!", `All DNA pairs restored in ${totalTime}. Let's build the words!`, "🧬"); 
+                                document.getElementById('modal-btn').onclick = () => {
+                                    document.getElementById('global-modal').classList.add('hidden');
+                                    startMission('spelling');
+                                };
                             }
-                            showModal("MISSION COMPLETE!", "Energy restored. Let's build the words!", "🧬"); 
-                            document.getElementById('modal-btn').onclick = () => {
-                                document.getElementById('global-modal').classList.add('hidden');
-                                startMission('spelling');
-                            };
                         }, 1000);
                     }
                 } else {
@@ -535,11 +628,56 @@
             }
         }
 
+        function renderMemoryHistory() {
+            const container = document.getElementById('memory-history');
+            const list = document.getElementById('history-list');
+            if(state.memoryHistory.length > 0) {
+                container.classList.remove('hidden');
+                list.innerHTML = state.memoryHistory.map((run, i) => `
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-indigo-50">
+                        <span class="font-bold text-slate-400">#${i+1} - ${run.date}</span>
+                        <span class="font-title text-indigo-600">${run.time}</span>
+                    </div>
+                `).reverse().join('');
+            }
+        }
+
         function initSpelling() { state.currentWordIdx = 0; renderSpelling(); }
         function repeatSpellingWord() { say(VOCABULARY[state.currentWordIdx].word); }
+        function showSpellingHint() {
+            const targetWord = VOCABULARY[state.currentWordIdx].word;
+            const slots = document.getElementById('spelling-slots').children;
+            for(let i=0; i < targetWord.length; i++) {
+                if(!slots[i].classList.contains('correct')) {
+                    slots[i].innerText = targetWord[i];
+                    slots[i].classList.add('hint-active');
+                }
+            }
+            setTimeout(() => {
+                for(let i=0; i < targetWord.length; i++) {
+                    if(slots[i].classList.contains('hint-active')) {
+                        slots[i].innerText = "";
+                        slots[i].classList.remove('hint-active');
+                    }
+                }
+            }, 1200);
+        }
+
+        function updateSpellingUI() {
+            const current = VOCABULARY[state.currentWordIdx];
+            document.getElementById('spelling-count').innerText = state.currentWordIdx + 1;
+            const prog = (state.spellingAttempt.length / current.word.length) * 100;
+            document.getElementById('word-inner-progress').style.width = `${prog}%`;
+            const hintBtn = document.getElementById('spelling-hint-btn');
+            if (state.spellingErrors >= 3) hintBtn.classList.remove('hidden');
+            else hintBtn.classList.add('hidden');
+        }
+
         function renderSpelling() {
             const current = VOCABULARY[state.currentWordIdx];
             state.spellingAttempt = [];
+            state.spellingErrors = 0;
+            updateSpellingUI();
             document.getElementById('spelling-icon').innerText = current.icon;
             const slots = document.getElementById('spelling-slots');
             slots.innerHTML = '';
@@ -569,29 +707,39 @@
                 say(letter);
                 state.spellingAttempt.push(letter);
                 const slot = document.getElementById('spelling-slots').children[nextIdx];
-                slot.innerText = letter; slot.classList.remove('opacity-30'); slot.classList.add('correct');
+                slot.innerText = letter; 
+                slot.classList.remove('opacity-30', 'hint-active'); 
+                slot.classList.add('correct');
                 btn.style.visibility = 'hidden';
+                updateSpellingUI();
                 if(state.spellingAttempt.length === targetWord.length) {
                     addStars(15);
-                    state.currentWordIdx++;
-                    if(state.currentWordIdx < VOCABULARY.length) { setTimeout(renderSpelling, 1000); }
-                    else { 
-                        if (!state.completedMissions.includes('spelling')) {
-                            state.completedMissions.push('spelling');
-                            addStars(50);
-                            unlockBadge('spelling');
-                            confetti();
+                    setTimeout(() => {
+                        say(targetWord);
+                        state.currentWordIdx++;
+                        if(state.currentWordIdx < VOCABULARY.length) setTimeout(renderSpelling, 1200);
+                        else { 
+                            if (!state.completedMissions.includes('spelling')) {
+                                state.completedMissions.push('spelling');
+                                addStars(50);
+                                unlockBadge('spelling');
+                                confetti();
+                                giveEncouragement(); 
+                            }
+                            showModal("WORDS ASSEMBLED", "Great work! Ready for the Final Liftoff?", "🏗️"); 
+                            document.getElementById('modal-btn').onclick = () => {
+                                document.getElementById('global-modal').classList.add('hidden');
+                                startMission('quiz');
+                            };
                         }
-                        showModal("WORDS ASSEMBLED", "Great work! Ready for the Final Liftoff?", "🏗️"); 
-                        document.getElementById('modal-btn').onclick = () => {
-                            document.getElementById('global-modal').classList.add('hidden');
-                            startMission('quiz');
-                        };
-                    }
+                    }, 800); 
                 }
             } else {
+                state.spellingErrors++;
+                updateSpellingUI();
                 const slot = document.getElementById('spelling-slots').children[nextIdx];
-                slot.classList.add('wrong'); setTimeout(() => slot.classList.remove('wrong'), 400);
+                slot.classList.add('wrong'); 
+                setTimeout(() => slot.classList.remove('wrong'), 400);
             }
         }
         function resetWord() { renderSpelling(); }
@@ -617,11 +765,11 @@
         function checkQuizAnswer(ans, correct) {
             if(ans === correct) { state.quizScore++; addStars(20); }
             state.currentWordIdx++;
-            if(state.currentWordIdx < VOCABULARY.length) { renderQuiz(); }
+            if(state.currentWordIdx < VOCABULARY.length) renderQuiz();
             else {
                 finishMission('quiz');
-                if(state.quizScore >= 12) { document.getElementById('diploma-modal').classList.remove('hidden'); }
-                else { showModal("Good try!", `Score: ${state.quizScore}/${VOCABULARY.length}. Practice more!`, "🚀"); }
+                if(state.quizScore >= 12) document.getElementById('diploma-modal').classList.remove('hidden');
+                else showModal("Good try!", `Score: ${state.quizScore}/${VOCABULARY.length}. Practice more!`, "🚀");
             }
         }
 
@@ -642,37 +790,61 @@
         }
         function hideModal() { document.getElementById('global-modal').classList.add('hidden'); showSection('map'); }
 
-        function downloadDiploma() {
+        async function downloadDiploma() {
             const name = document.getElementById('player-name').value || "SUPER EXPLORER";
+            
+            // Animación de despegue y efectos
             if (state.quizScore >= 12) {
                 const ship = document.getElementById('final-spaceship');
                 ship.classList.add('launching');
                 playTakeoffSound();
                 say("Thank you explorer! Bye bye!", 0.9);
-                const end = Date.now() + (3 * 1000);
-                (function frame() {
-                    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
-                    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
-                    if (Date.now() < end) { requestAnimationFrame(frame); }
-                }());
+                
+                // Efecto de confeti durante el vuelo
+                const endConfetti = Date.now() + (3.5 * 1000);
+                const frame = () => {
+                    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+                    if (Date.now() < endConfetti) requestAnimationFrame(frame);
+                };
+                frame();
+
+                // ESPERAR a que termine el vuelo (3 segundos de transición CSS + un pequeño margen)
+                await new Promise(resolve => setTimeout(resolve, 3200));
             }
+
+            // Generación y descarga del PDF después del vuelo
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l', 'mm', 'a4');
             const w = 297, h = 210;
+            
+            // Diseño del Diploma
             doc.setFillColor(30, 27, 75); doc.rect(0, 0, w, h, 'F');
             doc.setFillColor(255, 255, 255); doc.roundedRect(10, 10, w-20, h-20, 15, 15, 'F');
             doc.setDrawColor(99, 102, 241); doc.setLineWidth(3); doc.roundedRect(15, 15, w-30, h-30, 12, 12, 'S');
-            doc.setTextColor(99, 102, 241); doc.setFontSize(50); doc.text("FOOTPRINTS DIPLOMA", w/2, 50, {align: 'center'});
-            doc.setFontSize(20); doc.setTextColor(148, 163, 184); doc.text("Unit 5 Spelling second grade", w/2, 65, {align: 'center'});
-            doc.setFontSize(45); doc.setTextColor(236, 72, 153); doc.text(name.toUpperCase(), w/2, 115, {align: 'center'});
-            doc.setFontSize(18); doc.setTextColor(71, 85, 105); doc.text("For successfully mastering the magic vocabulary of special sounds.", w/2, 145, {align: 'center'});
-            doc.setFontSize(22); doc.setTextColor(16, 185, 129); doc.text(`FINAL SCORE: ${state.quizScore}/${VOCABULARY.length}`, w/2, 175, {align: 'center'});
+            
+            doc.setTextColor(99, 102, 241); doc.setFontSize(45); doc.text("FOOTPRINTS DIPLOMA", w/2, 45, {align: 'center'});
+            doc.setFontSize(18); doc.setTextColor(148, 163, 184); doc.text("Unit 5 Spelling second grade", w/2, 55, {align: 'center'});
+            doc.setFontSize(40); doc.setTextColor(236, 72, 153); doc.text(name.toUpperCase(), w/2, 95, {align: 'center'});
+            doc.setFontSize(16); doc.setTextColor(71, 85, 105); doc.text("For successfully mastering the magic vocabulary of special sounds.", w/2, 115, {align: 'center'});
+            doc.setFontSize(22); doc.setTextColor(16, 185, 129); doc.text(`FINAL SCORE: ${state.quizScore}/${VOCABULARY.length}`, w/2, 135, {align: 'center'});
+            
+            // Lista de palabras
+            doc.setFontSize(12); doc.setTextColor(99, 102, 241); doc.text("WORD LIST MASTERED:", w/2, 155, {align: 'center'});
+            doc.setFontSize(10); doc.setTextColor(148, 163, 184);
+            const wordsList = VOCABULARY.map(v => v.word).join("  •  ");
+            doc.text(wordsList, w/2, 165, {align: 'center', maxWidth: 240});
+
+            // Guardar archivo
             doc.save(`Diploma_${name}.pdf`);
+
+            // Mostrar mensaje final de cierre
             setTimeout(() => {
                 document.getElementById('diploma-modal').classList.add('hidden');
                 showModal("ZOG IS HOME!", "Your diploma is saved!", "🚀");
-                setTimeout(() => document.getElementById('final-spaceship').classList.remove('launching'), 4000);
-            }, 3500);
+                // Resetear posición del cohete para futuras partidas sin refrescar
+                setTimeout(() => document.getElementById('final-spaceship').classList.remove('launching'), 1000);
+            }, 500);
         }
 
         window.onload = () => { 
